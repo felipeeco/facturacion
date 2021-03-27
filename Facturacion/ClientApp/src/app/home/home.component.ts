@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProductServiceService } from '../services/product-service.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-home',
@@ -14,8 +15,9 @@ export class HomeComponent {
     price: false,
     stock: false
   };
+  @ViewChild("modalSuccessful", { static: false }) modalSuccessful;
 
-  constructor(private productService: ProductServiceService) {
+  constructor(private productService: ProductServiceService, private modalService: NgbModal) {
     this.formCreateProduct = new FormGroup
       ({
         'name': new FormControl("", [Validators.required]),
@@ -37,7 +39,9 @@ export class HomeComponent {
       }
     }else{
       this.productService.saveProduct(this.formCreateProduct.value).subscribe((data: any) => {
-        console.log(data);
+        if (data == 1) {
+          this.modalService.open(this.modalSuccessful, { size: 'lg' });
+        }
       });
     }
   }
